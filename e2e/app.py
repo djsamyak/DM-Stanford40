@@ -3,6 +3,9 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from skimage.transform  import resize
 from models.hybrid import model as hybrid
+from models.inceptionv3 import model as incepV3
+from models.resnet50 import model as res50 
+from models.resnet101 import model as res101
 
 class_label_dict = {
         0:'applauding',                        
@@ -47,20 +50,24 @@ class_label_dict = {
         49:'writing_on_a_book'                                              
     }
 
-PATH_InceptionResNetV2 = r'../../incepResV2_dropout2_lr4_schd.h5'
-PATH_InceptionV3 = r''
-PATH_ResNet101 = r''
-PATH_ResNet50 = r''
+PATH_InceptionResNetV2 = r'./weights/incepResV2_dropout2_lr4_schd.h5'
+PATH_InceptionV3 = r'./weights/InceptionV3.h5'
+PATH_ResNet101 = r'./weights/resnet101_reg.h5'
+PATH_ResNet50 = r'./weights/resnet50_4_12.h5'
 
-st.sidebar.title("Select Model:")
-selected_model = st.sidebar.selectbox('Model', ['ResNet50','ResNet101','InceptionV3','InceptionResNetV2'])
+st.title("Human Activity Recognition")
+st.sidebar.title("Select Model")
+selected_model = st.sidebar.selectbox('Model', ['---select---','ResNet50','ResNet101','InceptionV3','InceptionResNetV2'])
 
 if selected_model == 'ResNet50':
-    pass
+    current_model = res50
+    current_path = PATH_ResNet50
 elif selected_model == 'ResNet101':
-    pass
+    current_model = res101
+    current_path = PATH_ResNet101
 elif selected_model == 'InceptionV3':
-    pass
+    current_model = incepV3
+    current_path = PATH_InceptionV3
 elif selected_model == 'InceptionResNetV2':
     current_model = hybrid
     current_path = PATH_InceptionResNetV2
@@ -81,11 +88,16 @@ if operation_mode == 'Image':
         image_resized = resize(image, (256,256), anti_aliasing=True)
         image = np.expand_dims(image_resized, axis=0)
 
-        if st.button("Predict"):
-            model = current_model(current_path)
-            yhat = list(model.predict(image))
-            idx = yhat.index(max(yhat))
-            st.write(f"Predicted Class: {class_label_dict[idx]}")
-
+        if selected_model == '---select---':
+            st.warning("Model has not been selected")
+        else:
+            if st.button("Predict"):
+                model = current_model(current_path)
+                yhat = list(model.predict(image))
+                idx = np.argmax(yhat)
+                st.write(f"Predicted Class: {class_label_dict[idx]}")
+                st.write(f"Confidence Value: {yhat[0][idx]*100:.2f}%")
+                # st.write(f"Confidence Value: {yhat[0]}%")
+        
 elif operation_mode == 'Video':
     entered_url = st.text_area('Enter a YouTube URL to analyze')
