@@ -3,9 +3,17 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from skimage.transform  import resize
 from models.hybrid import model as hybrid
-from models.inceptionv3 import model as incepV3
 from models.resnet50 import model as res50 
 from models.resnet101 import model as res101
+from models.inceptionv3 import model as incepV3
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.backend import clear_session
+from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
+from pytube import YouTube
+import shutil
+import cv2
+import statistics
+import os
 
 class_label_dict = {
         0:'applauding',                        
@@ -47,7 +55,7 @@ class_label_dict = {
         36:'watching_TV',                        
         37:'waving_hands',                        
         38:'writing_on_a_board',                
-        49:'writing_on_a_book'                                              
+        39:'writing_on_a_book'                                              
     }
 
 PATH_InceptionResNetV2 = r'./weights/incepResV2_dropout2_lr4_schd.h5'
@@ -84,20 +92,74 @@ if operation_mode == 'Image':
         st.write("Selected Image:")
         st.image(uploaded_img,width = 400)
 
-        image = plt.imread(uploaded_img)
-        image_resized = resize(image, (256,256), anti_aliasing=True)
-        image = np.expand_dims(image_resized, axis=0)
-
         if selected_model == '---select---':
             st.warning("Model has not been selected")
         else:
+
+            img = image.load_img(uploaded_img, target_size=(256, 256))
+            img = image.img_to_array(img)
+            final_image = np.expand_dims(img, axis=0)
+            
+            if selected_model == 'InceptionResNetV2':
+                final_image = preprocess_input(final_image)
+
             if st.button("Predict"):
                 model = current_model(current_path)
-                yhat = list(model.predict(image))
+                yhat = list(model.predict(final_image))
                 idx = np.argmax(yhat)
                 st.write(f"Predicted Class: {class_label_dict[idx]}")
                 st.write(f"Confidence Value: {yhat[0][idx]*100:.2f}%")
-                # st.write(f"Confidence Value: {yhat[0]}%")
+                clear_session()
         
 elif operation_mode == 'Video':
-    entered_url = st.text_area('Enter a YouTube URL to analyze')
+
+    url_placeholder = ' '
+    entered_url =  st.text_input('Enter a youtube video link to analyze: ',value=' ')
+
+    if entered_url != url_placeholder:
+        if selected_model == '---select---':
+            st.warning("Model has not been selected")
+        else:
+            with st.spinner('Processing Video'):
+                link = entered_url
+                yt = YouTube(link)
+                out_file = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc().first().download('sample')
+                os.rename(out_file, './sample/sample.mp4')
+                cap = cv2.VideoCapture('./sample/sample.mp4')
+                n=0
+                while(cap.isOpened()):
+                    ret, frame = cap.read()
+                    if ret == False:
+                        break
+                    cv2.imwrite('./sample/'+str(n)+'.jpg',frame)
+                    n+=1
+
+                cap.release()
+            st.info('Video Processed!')
+            
+            index = []
+            model = current_model(current_path)
+
+            video_file = open('./sample/sample.mp4', 'rb')
+            video_bytes = video_file.read()
+            st.video(video_bytes)
+            video_file.close()
+
+            if st.button("Predict"):
+                for i in range(0,2):
+                    img = image.load_img('./sample/' + str(i) + '.jpg', target_size=(256, 256))
+
+                    x = image.img_to_array(img)
+                    x = np.expand_dims(x, axis=0)
+
+                    if selected_model == 'InceptionResNetV2':
+                        x = preprocess_input(x)
+
+                    pred = model.predict(x)
+                    pred = pred.tolist()
+                    index.append(pred[0].index(max(pred[0])))
+
+                idx = statistics.mode(index)
+                st.write("Prediction: ", class_label_dict[idx])
+                
+            shutil.rmtree(".\sample")

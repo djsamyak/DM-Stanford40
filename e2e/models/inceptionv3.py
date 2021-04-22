@@ -17,9 +17,7 @@ def model(weight_path):
     final_model.add(model)
     final_model.add(Flatten())
     final_model.add(Dense(units=1024,activation="relu"))
-    final_model.add(Dropout(0.2))
     final_model.add(Dense(units=512,activation="relu"))
-    final_model.add(Dropout(0.2))
     final_model.add(Dense(units=40, activation="softmax"))
 
     opt = SGD(lr=1e-4, momentum=0.9)

@@ -4,7 +4,6 @@ from tensorflow.keras.applications import ResNet101                             
 from tensorflow.keras.models import load_model
 from tensorflow.keras.optimizers import SGD                                           #MODIFY
 from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras import regularizers
 
 def model(weight_path):
     model = ResNet101(include_top = False,
@@ -17,13 +16,11 @@ def model(weight_path):
     final_model = Sequential()
     final_model.add(model)
     final_model.add(Flatten())
-    final_model.add(Dense(units=1024,kernel_regularizer = regularizers.l2(0.001),activation="relu"))
-    final_model.add(Dropout(0.2))
-    final_model.add(Dense(units=512,kernel_regularizer = regularizers.l2(0.001),activation="relu"))
-    final_model.add(Dropout(0.2))
+    final_model.add(Dense(units=1024,activation="relu"))
+    final_model.add(Dense(units=512,activation="relu"))
     final_model.add(Dense(units=40, activation="softmax"))
 
-    opt = SGD(lr=1e-3, momentum=0.9)
+    opt = SGD(lr=1e-4, momentum=0.9)
     final_model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
 
     final_model.load_weights(weight_path)
