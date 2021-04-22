@@ -1,5 +1,10 @@
+import os
+import cv2
+import shutil
+import statistics
 import numpy as np
 import streamlit as st 
+from pytube import YouTube
 import matplotlib.pyplot as plt
 from skimage.transform  import resize
 from models.hybrid import model as hybrid
@@ -7,13 +12,7 @@ from models.resnet50 import model as res50
 from models.resnet101 import model as res101
 from models.inceptionv3 import model as incepV3
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.backend import clear_session
 from tensorflow.keras.applications.inception_resnet_v2 import preprocess_input
-from pytube import YouTube
-import shutil
-import cv2
-import statistics
-import os
 
 class_label_dict = {
         0:'applauding',                        
@@ -109,7 +108,6 @@ if operation_mode == 'Image':
                 idx = np.argmax(yhat)
                 st.write(f"Predicted Class: {class_label_dict[idx]}")
                 st.write(f"Confidence Value: {yhat[0][idx]*100:.2f}%")
-                clear_session()
         
 elif operation_mode == 'Video':
 
