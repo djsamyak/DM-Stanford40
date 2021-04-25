@@ -10,7 +10,7 @@ The format is "**Action Category | URL 1 | URL 2 | URL 3 |**" ( The delimiter in
 2. Navigate to "./e2e"
 3. Create a folder called "weights"
 4. Move all the weights in that folder
-5. Run "streamlit run app.py"
+5. Run `streamlit run app.py`
 
 --------------------------------
 WEIGHTS AVAILABLE: <br>
