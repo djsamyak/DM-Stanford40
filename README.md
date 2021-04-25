@@ -4,7 +4,7 @@ Each action cateogry has 3 URLs available in the CSV file. <br>
 
 The format is "**Action Category | URL 1 | URL 2 | URL 3 |**" ( The delimiter in the CSV file is ',' and not ' | ' )
 
-#### To run this you need to follow th following steps:
+#### To run this you need to follow the following steps:
 
 1. Clone GitHub repository from https://github.com/djsamyak/DM-Stanford40.git
 2. Navigate to "./e2e"
