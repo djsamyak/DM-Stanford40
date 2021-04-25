@@ -14,6 +14,7 @@ The format is "**Action Category | URL 1 | URL 2 | URL 3 |**" ( The delimiter in
 
 --------------------------------
 WEIGHTS AVAILABLE: <br>
+
 ResNet50
 https://drive.google.com/file/d/14ejunhgwyrGcKmnNOQdxoa-6Ut2Q1cOt/view?usp=sharing
 
