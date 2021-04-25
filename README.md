@@ -15,14 +15,14 @@ The format is "**Action Category | URL 1 | URL 2 | URL 3 |**" ( The delimiter in
 --------------------------------
 WEIGHTS AVAILABLE: <br>
 
-ResNet50
+* ResNet50
 https://drive.google.com/file/d/14ejunhgwyrGcKmnNOQdxoa-6Ut2Q1cOt/view?usp=sharing
 
-ResNet101
+* ResNet101
 https://drive.google.com/file/d/1R3n0BZoH1aPNvyes9qXD-Zbt5TgPuJBO/view?usp=sharing
 
-InceptionV3
+* InceptionV3
 https://drive.google.com/file/d/1sTXstEoRgQPqNXgTc_EZpe8oA1vwXkiK/view?usp=sharing
 
-InceptionResnetV2
+* InceptionResnetV2
 https://drive.google.com/file/d/1-8U0HLPJFCC8FeCNOD4dUPkiwjFGGgtk/view?usp=sharing
